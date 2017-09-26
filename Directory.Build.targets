@@ -1,0 +1,22 @@
+<Project>
+  <Target Name="PublishProjectIfFrameworkSet"
+          DependsOnTargets="Publish"
+          Condition=" '$(TargetFramework)' != '' " />
+
+  <Target Name="PublishProjectForAllRIDsIfTargetFrameworkSet" Condition=" '$(TargetFramework)' != '' and '$(RuntimeIdentifiers)' != '' and '$(RuntimeIdentifier)' == ''  ">
+    <ItemGroup>
+      <_PublishRuntimeIdentifier Include="$(RuntimeIdentifiers)" />
+    </ItemGroup>
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="PublishAll" Properties="TargetFramework=$(TargetFramework);RuntimeIdentifier=%(_PublishRuntimeIdentifier.Identity);DeployOnBuild=true;PublishDir=../build/%(_PublishRuntimeIdentifier.Identity)" />
+  </Target>
+  
+  <Target Name="PublishProjectForAllFrameworksIfFrameworkUnset" Condition=" '$(TargetFramework)' == '' ">
+    <ItemGroup>
+      <_PublishFramework Include="$(TargetFrameworks)" />
+    </ItemGroup>
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="PublishAll" Properties="TargetFramework=%(_PublishFramework.Identity)" />
+  </Target>
+  
+  <Target Name="PublishAll"
+          DependsOnTargets="PublishProjectIfFrameworkSet;PublishProjectForAllRIDsIfTargetFrameworkSet;PublishProjectForAllFrameworksIfFrameworkUnset" />
+</Project>

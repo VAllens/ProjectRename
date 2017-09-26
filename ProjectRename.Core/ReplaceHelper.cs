@@ -132,11 +132,12 @@ namespace ProjectRename.Core
         /// <returns></returns>
         private static bool ReplaceText(string fileName, string findText, string replaceText, string options)
         {
-            if (fileName.IndexOf(".js", StringComparison.Ordinal) >= 0 ||
-                fileName.IndexOf(".css", StringComparison.Ordinal) >= 0 ||
-                fileName.IndexOf(".png", StringComparison.Ordinal) >= 0 ||
-                fileName.IndexOf(".gif", StringComparison.Ordinal) >= 0 ||
-                fileName.IndexOf(".jpg", StringComparison.Ordinal) >= 0)
+            string extensionName = Path.GetExtension(fileName);
+            if (extensionName.Equals(".dll", StringComparison.Ordinal) ||
+                extensionName.Equals(".exe", StringComparison.Ordinal) ||
+                extensionName.Equals(".png", StringComparison.Ordinal) ||
+                extensionName.Equals(".gif", StringComparison.Ordinal) ||
+                extensionName.Equals(".jpg", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -177,7 +178,6 @@ namespace ProjectRename.Core
             if (fileName.Contains(findText))
             {
                 string path = Path.GetDirectoryName(fileName);
-                string extensionName = Path.GetExtension(fileName);
                 string oldFileName = Path.GetFileNameWithoutExtension(fileName);
                 string newFileName = oldFileName.Replace(findText, replaceText);
                 string newFilePath = Path.Combine(path, newFileName + extensionName);

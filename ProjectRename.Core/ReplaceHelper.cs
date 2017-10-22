@@ -133,6 +133,19 @@ namespace ProjectRename.Core
         private static bool ReplaceText(string fileName, string findText, string replaceText, string options)
         {
             string extensionName = Path.GetExtension(fileName);
+            
+            if (fileName.Contains(findText))
+            {
+                string path = Path.GetDirectoryName(fileName);
+                string oldFileName = Path.GetFileNameWithoutExtension(fileName);
+                string newFileName = oldFileName.Replace(findText, replaceText);
+                string newFilePath = Path.Combine(path, newFileName + extensionName);
+
+                File.Move(fileName, newFilePath);
+                fileName = newFilePath;
+                Console.WriteLine("New file name after replacement: " + newFilePath);
+            }
+
             if (extensionName.Equals(".dll", StringComparison.Ordinal) ||
                 extensionName.Equals(".exe", StringComparison.Ordinal) ||
                 extensionName.Equals(".png", StringComparison.Ordinal) ||
@@ -174,17 +187,6 @@ namespace ProjectRename.Core
 
             string contents = TextHelper.ReplaceText(File.ReadAllText(fileName, encoding), findText, replaceText, options);
             File.WriteAllText(fileName, contents, encoding);
-
-            if (fileName.Contains(findText))
-            {
-                string path = Path.GetDirectoryName(fileName);
-                string oldFileName = Path.GetFileNameWithoutExtension(fileName);
-                string newFileName = oldFileName.Replace(findText, replaceText);
-                string newFilePath = Path.Combine(path, newFileName + extensionName);
-
-                File.Move(fileName, newFilePath);
-                Console.WriteLine("New file name after replacement: " + newFilePath);
-            }
 
             return true;
         }
